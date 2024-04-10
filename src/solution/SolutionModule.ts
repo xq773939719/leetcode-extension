@@ -7,7 +7,7 @@
  * Copyright (c) 2022 ccagml . All rights reserved.
  */
 
-import { ViewColumn } from "vscode";
+import { ViewColumn, Uri } from "vscode";
 import { BaseWebViewService } from "../service/BaseWebviewService";
 import { markdownService } from "../service/MarkdownService";
 import { IWebViewOption } from "../model/ConstDefind";
@@ -59,7 +59,7 @@ class SolutionService extends BaseWebViewService {
   }
 
   private getHintsContent(): string {
-    const styles: string = markdownService.getStyles();
+    const styles: string = markdownService.getStyles(this.panel);
     let h = this.hints;
     let body: Array<any> = [];
     if (h.length == 0) {
@@ -71,21 +71,25 @@ class SolutionService extends BaseWebViewService {
         body.push(hint_body);
       }
     }
+
+    let kates_css_path = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "resources",
+      "katexcss",
+      "kates.min.css"
+    )
+    const catGifSrc = this.panel?.webview.asWebviewUri(Uri.file(kates_css_path));
+
     return `
             <!DOCTYPE html>
             <html>
             <head>
                 <meta http-equiv="Content-Security-Policy" content="default-src self; img-src vscode-resource:; script-src vscode-resource: 'self' 'unsafe-inline'; style-src vscode-resource: 'self' 'unsafe-inline'; "/>
                 ${styles}
-                <link rel="stylesheet" type="text/css" href= "vscode-resource:${path.join(
-                  __dirname,
-                  "..",
-                  "..",
-                  "..",
-                  "resources",
-                  "katexcss",
-                  "kates.min.css"
-                )}">
+                <link rel="stylesheet" type="text/css" href= "${catGifSrc}">
             </head>
             <body class="vscode-body 'scrollBeyondLastLine' 'wordWrap' 'showEditorSelection'" style="tab-size:4">
                 ${body.join("\n")}
@@ -95,7 +99,7 @@ class SolutionService extends BaseWebViewService {
   }
 
   private getSolutionContent(): string {
-    const styles: string = markdownService.getStyles();
+    const styles: string = markdownService.getStyles(this.panel);
     const { title, url, lang, author, votes } = this.solution;
     const head: string = markdownService.render(`# [${title}](${url})`);
     const auth: string = this.solution.is_cn
@@ -120,6 +124,8 @@ class SolutionService extends BaseWebViewService {
     });
     // "<link rel=\"stylesheet\" type=\"text/css\" href=\"vscode-resource:/home/cc/.vscode-server/bin/30d9c6cd9483b2cc586687151bcbcd635f373630/extensions/markdown-language-features/media/markdown.css\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"vscode-resource:/home/cc/.vscode-server/bin/30d9c6cd9483b2cc586687151bcbcd635f373630/extensions/markdown-language-features/media/highlight.css\">\n<style>\nbody {\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;\n    font-size: 14px;\n    line-height: 1.6;\n}\n</style>"
     // <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; script-src vscode-resource:; style-src vscode-resource:;"/>
+    let kates_css_path = path.join(__dirname, "..", "..", "..", "resources", "katexcss", "kates.min.css")
+    const catGifSrc = this.panel?.webview.asWebviewUri(Uri.file(kates_css_path));
 
     return `
             <!DOCTYPE html>
@@ -127,15 +133,7 @@ class SolutionService extends BaseWebViewService {
             <head>
                 <meta http-equiv="Content-Security-Policy" content="default-src self; img-src vscode-resource:; script-src vscode-resource: 'self' 'unsafe-inline'; style-src vscode-resource: 'self' 'unsafe-inline'; "/>
                 ${styles}
-                <link rel="stylesheet" type="text/css" href= "vscode-resource:${path.join(
-                  __dirname,
-                  "..",
-                  "..",
-                  "..",
-                  "resources",
-                  "katexcss",
-                  "kates.min.css"
-                )}">
+                <link rel="stylesheet" type="text/css" href= "${catGifSrc}">
             </head>
             <body class="vscode-body 'scrollBeyondLastLine' 'wordWrap' 'showEditorSelection'" style="tab-size:4">
                 ${head}

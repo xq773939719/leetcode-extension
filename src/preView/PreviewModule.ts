@@ -110,7 +110,7 @@ class PreviewService extends BaseWebViewService {
             <html>
             <head>
                 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https:; script-src vscode-resource: 'unsafe-inline'; style-src vscode-resource: 'unsafe-inline';"/>
-                ${markdownService.getStyles()}
+                ${markdownService.getStyles(this.panel)}
                 ${!this.sideMode ? button.style : ""}
                 <style>
                     code { white-space: pre-wrap; }

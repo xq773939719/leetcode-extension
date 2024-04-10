@@ -50,30 +50,29 @@ class MarkdownService implements vscode.Disposable {
     return this.engine.render(md, env);
   }
 
-  public getStyles(): string {
-    return [this.getBuiltinStyles(), this.getSettingsStyles()].join(os.EOL);
+  public getStyles(panel: vscode.WebviewPanel | undefined): string {
+    return [this.getBuiltinStyles(panel), this.getDefaultStyle()].join(os.EOL);
   }
 
-  private getBuiltinStyles(): string {
+  private getBuiltinStyles(panel: vscode.WebviewPanel | undefined): string {
     let styles: vscode.Uri[] = [];
     try {
       const stylePaths: string[] = require(path.join(this.config.extRoot, "package.json"))["contributes"][
         "markdown.previewStyles"
       ];
       styles = stylePaths.map((p: string) =>
-        vscode.Uri.file(path.join(this.config.extRoot, p)).with({
-          scheme: "vscode-resource",
-        })
+        vscode.Uri.file(path.join(this.config.extRoot, p))
       );
     } catch (error) {
       BABA.getProxy(BabaStr.LogOutputProxy).get_log().appendLine("[Error] Fail to load built-in markdown style file.");
     }
-    return styles
-      .map((style: vscode.Uri) => `<link rel="stylesheet" type="text/css" href="${style.toString()}">`)
+    let bbb = styles
+      .map((style: vscode.Uri) => `<link rel="stylesheet" type="text/css" href="${panel?.webview.asWebviewUri(style)}">`)
       .join(os.EOL);
+    return bbb
   }
 
-  private getSettingsStyles(): string {
+  private getDefaultStyle(): string {
     return [
       `<style>`,
       `body {`,

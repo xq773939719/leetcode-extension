@@ -89,7 +89,7 @@ class SubmissionService extends BaseWebViewService {
   }
 
   protected getWebviewContent(): string {
-    const styles: string = markdownService.getStyles();
+    const styles: string = markdownService.getStyles(this.panel);
     const title: string = `## ${this.result.messages[0]}`;
     if (this.result?.costTime && this.result?.costTime.length > 0) {
       this.result.messages.push(this.result?.costTime[0]);
